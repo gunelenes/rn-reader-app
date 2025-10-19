@@ -1,9 +1,15 @@
 import { Link } from "expo-router";
 import { useEffect, useState } from "react";
 import { FlatList, Pressable, Text, View } from "react-native";
+import { configureReanimatedLogger, ReanimatedLogLevel } from "react-native-reanimated";
 import bookData from "../data/books/eybar.chapters.json";
 import { useReaderStore } from "../src/store/useReaderStore";
 import type { Book } from "../src/types";
+
+configureReanimatedLogger({
+  level: ReanimatedLogLevel.warn,
+  strict: false,
+});
 
 export default function Library() {
   const [books, setBooks] = useState<Book[]>([]);

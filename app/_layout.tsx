@@ -1,10 +1,12 @@
-import { Stack } from "expo-router";
-import { Pressable, Text } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { Stack, useRouter } from "expo-router";
+import { Pressable, Text, View } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { useReaderStore } from "../src/store/useReaderStore";
 
 export default function Layout() {
   const { prefs, setPrefs } = useReaderStore();
+  const router = useRouter();
 
   const toggleTheme = () => {
     const next =
@@ -60,16 +62,41 @@ export default function Layout() {
           headerTitleStyle: {
             fontWeight: "600",
           },
+          // 🔹 Sağ üstteki butonlar (tema + profil)
           headerRight: () => (
-            <Pressable onPress={toggleTheme} style={{ paddingHorizontal: 12 }}>
-              <Text style={{ color: getHeaderColor(), fontSize: 18 }}>{getEmoji()}</Text>
-            </Pressable>
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+              {/* Tema değiştirme */}
+              <Pressable onPress={toggleTheme} style={{ paddingHorizontal: 8 }}>
+                <Text
+                  style={{
+                    color: getHeaderColor(),
+                    fontSize: 18,
+                    marginRight: 4,
+                  }}
+                >
+                  {getEmoji()}
+                </Text>
+              </Pressable>
+
+              {/* Profil simgesi */}
+              <Pressable
+                onPress={() => router.push("/Profile")}
+                style={{ paddingHorizontal: 8 }}
+              >
+                <Ionicons
+                  name="person-circle-outline"
+                  size={26}
+                  color={getHeaderColor()}
+                />
+              </Pressable>
+            </View>
           ),
         }}
       >
         <Stack.Screen name="index" options={{ title: "Kütüphane" }} />
         <Stack.Screen name="reader" options={{ title: "Okuyucu" }} />
         <Stack.Screen name="settings" options={{ title: "Ayarlar" }} />
+        <Stack.Screen name="profile" options={{ title: "Profil" }} /> {/* ✅ eklendi */}
       </Stack>
     </SafeAreaProvider>
   );
