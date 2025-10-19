@@ -1,24 +1,76 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { Stack } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
-import 'react-native-reanimated';
+import { Stack } from "expo-router";
+import { Pressable, Text } from "react-native";
+import { SafeAreaProvider } from "react-native-safe-area-context";
+import { useReaderStore } from "../src/store/useReaderStore";
 
-import { useColorScheme } from '@/hooks/use-color-scheme';
+export default function Layout() {
+  const { prefs, setPrefs } = useReaderStore();
 
-export const unstable_settings = {
-  anchor: '(tabs)',
-};
+  const toggleTheme = () => {
+    const next =
+      prefs.theme === "light"
+        ? "sepia"
+        : prefs.theme === "sepia"
+        ? "dark"
+        : "light";
+    setPrefs({ theme: next });
+  };
 
-export default function RootLayout() {
-  const colorScheme = useColorScheme();
+  const getEmoji = () => {
+    switch (prefs.theme) {
+      case "dark":
+        return "🌙";
+      case "sepia":
+        return "☕";
+      default:
+        return "☀️";
+    }
+  };
+
+  const getHeaderBg = () => {
+    switch (prefs.theme) {
+      case "dark":
+        return "#000";
+      case "sepia":
+        return "#f5e6c8";
+      default:
+        return "#fff";
+    }
+  };
+
+  const getHeaderColor = () => {
+    switch (prefs.theme) {
+      case "dark":
+        return "#fff";
+      case "sepia":
+        return "#4b3f2f";
+      default:
+        return "#000";
+    }
+  };
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
+    <SafeAreaProvider>
+      <Stack
+        screenOptions={{
+          headerStyle: {
+            backgroundColor: getHeaderBg(),
+          },
+          headerTintColor: getHeaderColor(),
+          headerTitleStyle: {
+            fontWeight: "600",
+          },
+          headerRight: () => (
+            <Pressable onPress={toggleTheme} style={{ paddingHorizontal: 12 }}>
+              <Text style={{ color: getHeaderColor(), fontSize: 18 }}>{getEmoji()}</Text>
+            </Pressable>
+          ),
+        }}
+      >
+        <Stack.Screen name="index" options={{ title: "Kütüphane" }} />
+        <Stack.Screen name="reader" options={{ title: "Okuyucu" }} />
+        <Stack.Screen name="settings" options={{ title: "Ayarlar" }} />
       </Stack>
-      <StatusBar style="auto" />
-    </ThemeProvider>
+    </SafeAreaProvider>
   );
 }
